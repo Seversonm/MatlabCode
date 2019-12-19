@@ -19,7 +19,5 @@ for s = 1:st %% make a matrix with stim number, repeats, and time. This means fo
     end
 end
 
-for response 
-
-%F0= response
+%F0= response?
 %Dfof = (F(t)-F0)/F0
