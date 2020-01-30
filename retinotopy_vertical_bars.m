@@ -2,6 +2,7 @@
 % the horizontal bars. This version is for when you split the recording between the vertical bars 
 % and the horizontal bars, and this particular analysis is for the VERTICAL bars. 
 % First open your data in  Caliman and export, then run the following code.
+% Tested 1/30/2020. 
 
 for n=1:size(data.vdat,2);vsig(n)=mean(data.vdat{n});end;
 
@@ -37,3 +38,15 @@ for n=1:10
         onset_times(k+m)=onset_times(k+m-1)+6*FR;
     end;
 end;
+stim_time = round(onset_times);
+
+I(1:256,1:455,1:size(vsig,2))=0;
+for n=1:size(vsig,2);I(:,:,n)=data.green{n};end;
+Ineuro(1:256,1:455,1:124,1:115)=0;
+for m=1:size(stim_time,2);
+    disp(m);
+    Ineuro(:,:,1:124,m) = I(:,:,stim_time(m)-62:stim_time(m)+61);
+end;
+
+spatfltr = ones(50,50)/2500;
+imagesc(imfilter(mean(mean(Ineuro(:,:,63:124,:),4),3),spatfltr)-imfilter(mean(mean(Ineuro(:,:,1:62,:),4),3),spatfltr))
