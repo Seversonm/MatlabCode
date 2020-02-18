@@ -14,25 +14,25 @@ for s = 1:st %% make a matrix with stim number, repeats, and time. This means fo
 end
 
 %%%%%%STUFF YOU NEED TO EDIT%%%%%%%%
-ce = cellnum-1; %we don't care about the blank
-el = data.stim(:,2);
-el = el'; 
+cellnum1 = cellnum-1; %we don't care about the blank
+elements = data.stim(:,2);
+elements = elements'; 
 %%%%%%%%%%Set some times%%%%%%%%%%%%
-del =0; % time from ttl->show. What is the delay before the stim shows?
-bas = del+32; %for delta F
-en = 352; %end of stim + some more
+delay = 3; % time from ttl->show. What is the delay before the stim shows? 3 sec for my protocol.
+bas = delay+32; %for delta F
+stimend = 352; %end of stim + some more
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%preallocate variables%%%%%%%
-combFraw = zeros(nt,((en-del)+1),st);
-combf = zeros(nt,((en-del)+1),st);
+combFraw = zeros(nt,((stimend-delay)+1),st);
+combf = zeros(nt,((stimend-delay)+1),st);
 degmean = zeros(st,1);
 degstd = zeros(st,1);
 degstderr = zeros(st,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for b = 1:ce %cell number. set the initial conditions equal to 1 to test. 
+for b = 1:cellnum1 %cell number. set the initial conditions equal to 1 to test. 
     w = cellnum; % blank dark cell
     n = nt;
 for p = 1:n %repeat number
@@ -40,7 +40,7 @@ for p = 1:n %repeat number
     
 %%%%%%raw signal for each trial%%%%%    
 for i = 1:st
-    combFraw(p,:,i) = data.Fraw(b,frames(p,i)+del:frames(p,i)+en)-data.Fraw(w,frames(p,i)+del:frames(p,i)+en);                   
+    combFraw(p,:,i) = data.Fraw(b,frames(p,i)+delay:frames(p,i)+stimend)-data.Fraw(w,frames(p,i)+delay:frames(p,i)+stimend);                   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,14 +49,14 @@ end
 %%%%%%%%%%delta F calc%%%%%%%%%%%%%%
 for p=1:n
      for i=1:st
-combf(p,:,i)=(combFraw(p,:,i)-mean(combFraw(p,del:bas,i)))./mean(combFraw(p,del:bas,i));
+combf(p,:,i)=(combFraw(p,:,i)-mean(combFraw(p,delay:bas,i)))./mean(combFraw(p,delay:bas,i));
      end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%frames to seconds%%%%%%%%%%%%
 time(1) = 1/32; %32 frames/s
-for i =2:((en-del)+1) % 2 to end of frame
+for i =2:((stimend-delay)+1) % 2 to end of frame
     time(i) = time(i-1) + 1/32;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,25 +65,25 @@ end
 combfa = mean(combf,1);
 combFrawa = mean(combFraw,1);
 combstd = std(combFraw,1);
-combstderr = combstd/(sqrt(ce));
+combstderr = combstd/(sqrt(cellnum1));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%Plot Raw data%%%%%%%%%%%%%% 
-%  figure (b+200)
-%  for j=1:st %num of stim. condition
-%  subplot(st,1,j)
-%     for i=1:n          
-%  plot(time,combFraw(i,:,j),'k')
-%     hold on
-%  plot(time,combFrawa(:,:,j),'r')
-% %     ylim([-1 1])
-%      xlim([0 11])
-%      line([1.5 1.5],[0 200]) %stim onset
-%     hold on
-%      line([5.5 5.5],[0 200])
-%set(gcf, 'Position', [100, 100, 400, 850])
-%     end
-%  end
+ figure (b+200)
+ for j=1:st %num of stim. condition
+ subplot(st,1,j)
+    for i=1:n          
+ plot(time,combFraw(i,:,j),'k')
+    hold on
+ plot(time,combFrawa(:,:,j),'r')
+%     ylim([-1 1])
+     xlim([0 11])
+     line([1.5 1.5],[0 200]) %stim onset
+    hold on
+     line([5.5 5.5],[0 200])
+set(gcf, 'Position', [100, 100, 400, 850])
+    end
+ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%Plot Delta F%%%%%%%%%%%%%%
@@ -107,22 +107,22 @@ set(gcf, 'Position', [100, 100, 400, 850])
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%plot tuning curve%%%%%%%%%%
-%Tuning curve from raw signal
-% for i = 1:st
-%     degmean(i,1) = mean(combFrawa(1,128:256,i));
-% end
-% degmean = degmean';
-% degmeanf = degmean(1,1:8);
-% for i = 1:st
-%      degstderr(i,1) = mean(combstd(1,128:256,i));
-% end 
-% degstderr = degstderr';
-% degstderrf = degstderr(1,1:8);
-% ax = [0,45,90,135,180,225,270,315];
-% xlabels = {'0°','45°','90°','135°','180°','225°','270°','315°'};
-% figure(b+400)   
-%      errorbar(ax,degmeanf,degstderrf)
-%      set(gca, 'Xtick', ax, 'XtickLabel', xlabels)
+%%Tuning curve from raw signal
+for i = 1:st
+    degmean(i,1) = mean(combFrawa(1,128:256,i));
+end
+degmean = degmean';
+degmeanf = degmean(1,1:8);
+for i = 1:st
+     degstderr(i,1) = mean(combstd(1,128:256,i));
+end 
+degstderr = degstderr';
+degstderrf = degstderr(1,1:8);
+ax = [0,45,90,135,180,225,270,315];
+xlabels = {'0°','45°','90°','135°','180°','225°','270°','315°'};
+figure(b+400)   
+     errorbar(ax,degmeanf,degstderrf)
+     set(gca, 'Xtick', ax, 'XtickLabel', xlabels)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end
