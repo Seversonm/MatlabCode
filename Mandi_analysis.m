@@ -18,7 +18,7 @@ ce = cellnum-1; %we don't care about the blank
 el = data.stim(:,2);
 el = el'; 
 %%%%%%%%%%Set some times%%%%%%%%%%%%
-del =0; % time from ttl->show
+del =0; % time from ttl->show. What is the delay before the stim shows?
 bas = del+32; %for delta F
 en = 352; %end of stim + some more
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,7 +32,7 @@ degstderr = zeros(st,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for b = 1:ce %cell number
+for b = 1:ce %cell number. set the initial conditions equal to 1 to test. 
     w = cellnum; % blank dark cell
     n = nt;
 for p = 1:n %repeat number

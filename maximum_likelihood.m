@@ -12,6 +12,9 @@ prediction = psym(data,params);
 plot(data(:,1), data(:,2)/72, 'o')
 hold on
 plot(data(:,1), prediction, 'r')
+title ('Psychometric Function of Class Data'); 
+xlabel ('x');
+ylabel ('Proportion Response A');
 
 function [L] = minimize(params)
 %UNTITLED2 Summary of this function goes here
